@@ -22,11 +22,15 @@ async function init() {
   try {
     config = await loadConfig();
     if (!config.supabaseUrl || !config.supabaseAnonKey) {
-      appEl.innerHTML = '<div class="error-box">Ошибка: не задана конфигурация Supabase. Установите SUPABASE_URL и SUPABASE_ANON_KEY.</div>';
+      appEl.innerHTML = '<div class="error-box">Ошибка: не задана конфигурация Supabase. Проверьте переменные окружения SUPABASE_URL и SUPABASE_ANON_KEY на сервере.</div>';
+      console.error('Config missing:', { supabaseUrl: !!config.supabaseUrl, supabaseAnonKey: !!config.supabaseAnonKey });
       return;
     }
 
+    console.log('✓ Config loaded successfully');
     supabase = supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    console.log('✓ Supabase client initialized');
+    
     const sessionResult = await supabase.auth.getSession();
     if (sessionResult?.data?.session) {
       await restoreProfile();
@@ -44,15 +48,27 @@ async function init() {
       }
     });
   } catch (err) {
-    console.error(err);
-    appEl.innerHTML = '<div class="error-box">Ошибка инициализации приложения.</div>';
+    console.error('Init error:', err);
+    const errorMsg = err?.message || err;
+    appEl.innerHTML = `<div class="error-box">Ошибка инициализации приложения.<br><small>${escapeHtml(errorMsg)}</small></div>`;
   }
 }
 
 async function loadConfig() {
-  const res = await fetch('/api/config');
-  if (!res.ok) throw new Error('Не удалось загрузить конфигурацию');
-  return res.json();
+  try {
+    const res = await fetch('/api/config');
+    console.log('Config response status:', res.status);
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errorText}`);
+    }
+    const config = await res.json();
+    console.log('Config fetched:', { supabaseUrl: !!config.supabaseUrl, supabaseAnonKey: !!config.supabaseAnonKey, agoraAppId: !!config.agoraAppId });
+    return config;
+  } catch (err) {
+    console.error('Failed to load config:', err);
+    throw err;
+  }
 }
 
 async function restoreProfile() {

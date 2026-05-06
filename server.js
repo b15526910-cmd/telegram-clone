@@ -27,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/chats', chatsRoutes);
 app.use('/api/messages', messagesRoutes);
+app.get('/api/config', require('./api/config'));
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
