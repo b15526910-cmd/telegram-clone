@@ -27,12 +27,16 @@ async function init() {
       return;
     }
 
-    console.log('✓ Config loaded successfully');
-    sconst supabaseLib = window.supabase || window.Supabase || window.supabaseJS;
-if (!supabaseLib) {
-  throw new Error('Библиотека Supabase не загружена. Проверьте подключение в index.html');
-}
-supabase = supabaseLib.createClient(config.supabaseUrl, config.supabaseAnonKey);
+        console.log('✓ Config loaded successfully');
+    
+    // Исправлено: убрана лишняя 's' и добавлена проверка window
+    const supabaseLib = window.supabase || window.Supabase || window.supabaseJS;
+    
+    if (!supabaseLib) {
+      throw new Error('Библиотека Supabase не загружена. Проверьте подключение в index.html');
+    }
+    
+    supabase = supabaseLib.createClient(config.supabaseUrl, config.supabaseAnonKey);
 
 
 
@@ -562,4 +566,8 @@ function escapeHtml(value) {
     .replace(/'/g, '&#039;');
 }
 
-init();
+// Ждем полной загрузки страницы и библиотек, прежде чем запускать приложение
+window.addEventListener('load', () => {
+  init();
+});
+
