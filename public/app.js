@@ -28,7 +28,8 @@ async function init() {
     }
 
     console.log('✓ Config loaded successfully');
-    ssupabase = supabase.createClient ? supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    ssupabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+
 
 
     console.log('✓ Supabase client initialized');
