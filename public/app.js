@@ -28,7 +28,12 @@ async function init() {
     }
 
     console.log('✓ Config loaded successfully');
-    ssupabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    sconst supabaseLib = window.supabase || window.Supabase || window.supabaseJS;
+if (!supabaseLib) {
+  throw new Error('Библиотека Supabase не загружена. Проверьте подключение в index.html');
+}
+supabase = supabaseLib.createClient(config.supabaseUrl, config.supabaseAnonKey);
+
 
 
 
