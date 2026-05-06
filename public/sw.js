@@ -2,13 +2,10 @@
 const CACHE_NAME = 'zhuravlev-messenger-v1';
 const urlsToCache = [
   '/',
-  '/chat.html',
+  '/index.html',
   '/style.css',
   '/app.js',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/badge-72.png'
+  '/manifest.json'
 ];
 
 // Установка и кэширование статики
